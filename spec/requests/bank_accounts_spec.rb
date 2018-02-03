@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe 'BankAccounts API', type: :request do 
 	# initialize test data
-	let(:bank) {FactoryBot.create(:bank) }
+	let(:bank) { FactoryBot.create(:bank) }
 	let!(:bank_accounts){ create_list(:bank_account, 10, bank: bank) }
 	let(:bank_account_id) { bank_accounts.first.id }
 
 	describe 'GET /bank_accounts/:id' do
-		before { get "/bank_accounts/#{bank_account_id}"}
+		before { get "/api/v1/bank/#{bank.id}/bank_accounts/#{bank_account_id}"}
 
 		context 'when bank_account exist' do
 			it 'returns the bank_account' do
@@ -36,10 +36,22 @@ RSpec.describe 'BankAccounts API', type: :request do
   # Test suite for POST /todos
   describe 'POST /bank_accounts' do
     # valid bank accounts
-    let(:ba_attributes) { { iban: '123456789', bank: @bank } }
+    let(:bank) { FactoryBot.create(:bank) }
+    let(:ba_attributes) { 
+    											{ bank_account: 
+    												{ 
+    													iban: '123456789', 
+    													bank: bank,
+    													balance: 12345 
+    												} 
+    											} 
+    										}
 
     context 'when the request is valid' do
-      before { post '/bank_accounts', params: ba_attributes }
+      before do
+      	bank
+      	post "/api/v1/bank/#{bank.id}/bank_accounts", params: ba_attributes
+      end
 
       it 'creates a bank_account' do
         expect(json['iban']).to eq('123456789')
@@ -51,7 +63,10 @@ RSpec.describe 'BankAccounts API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/bank_accounts', params: { iban: 'Foobar' } }
+      before do
+      	bank
+				post "/api/v1/bank/#{bank.id}/bank_accounts", params: {bank_account:{ iban: 'Foobar' } } 
+			end
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -59,7 +74,7 @@ RSpec.describe 'BankAccounts API', type: :request do
 
       it 'returns a validation failure message' do
         expect(response.body)
-          .to match(/Validation failed: Created by can't be blank/)
+          .to match(/Balance can't be blank/)
       end
     end
   end

@@ -1,6 +1,6 @@
-class CreatePaymentMethods < ActiveRecord::Migration[5.1]
+class CreatePayments < ActiveRecord::Migration[5.1]
   def change
-    create_table :payment_methods do |t|
+    create_table :payments do |t|
       t.integer :amount
       t.string :status
       t.references :origin, index: true

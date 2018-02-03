@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20180203133320) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "payment_methods", force: :cascade do |t|
+  create_table "payments", force: :cascade do |t|
     t.integer "amount"
     t.string "status"
     t.integer "origin_id"
@@ -35,8 +35,8 @@ ActiveRecord::Schema.define(version: 20180203133320) do
     t.integer "comision"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["destination_id"], name: "index_payment_methods_on_destination_id"
-    t.index ["origin_id"], name: "index_payment_methods_on_origin_id"
+    t.index ["destination_id"], name: "index_payments_on_destination_id"
+    t.index ["origin_id"], name: "index_payments_on_origin_id"
   end
 
 end

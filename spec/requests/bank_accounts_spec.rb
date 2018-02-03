@@ -87,7 +87,7 @@ RSpec.describe 'BankAccounts API', type: :request do
     context 'when payments exist' do
       before do
         payments
-        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/origin_payments"
+        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments"
       end
 
       it 'returns the payments when origin is the bank_account' do
@@ -102,15 +102,15 @@ RSpec.describe 'BankAccounts API', type: :request do
 
     context 'when payments does not exist' do
       before do
-        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/origin_payments"
+        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments"
       end
 
-      it 'returns status code 404' do
-        expect(response).to have_http_status(404)
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
       end
 
-      it 'returns a not found message' do
-        expect(response.body).to match(/Couldn't find BankAccount/)
+      it "returns a empty json" do
+        expect(json).to be_empty
       end
     end
   end

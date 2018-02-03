@@ -12,6 +12,12 @@ module Api::V1
 			json_response(@bank_account)
 		end
 
+		def payments
+			bank_account = @bank.bank_accounts.find(params[:bank_account_id])	
+			@payments	= bank_account.origin_payments
+			json_response(@payments)
+		end
+
 		private
 
 		def bank_account_params

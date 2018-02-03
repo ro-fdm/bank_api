@@ -79,4 +79,40 @@ RSpec.describe 'BankAccounts API', type: :request do
     end
   end
 
+  describe 'GET /bank_accounts/:id/origin_payments' do
+    let(:destination){ FactoryBot.create(:bank_account)}
+    let(:origin){ FactoryBot.create(:bank_account, bank: bank)}
+    let(:payments){ create_list(:payment, 10, origin: origin, destination: destination )}
+
+    context 'when payments exist' do
+      before do
+        payments
+        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/origin_payments"
+      end
+
+      it 'returns the payments when origin is the bank_account' do
+        expect(json).not_to be_empty
+        expect(json.size).to eq(10)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'when payments does not exist' do
+      before do
+        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/origin_payments"
+      end
+
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+      end
+
+      it 'returns a not found message' do
+        expect(response.body).to match(/Couldn't find BankAccount/)
+      end
+    end
+  end
+
 end

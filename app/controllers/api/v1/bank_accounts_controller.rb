@@ -1,19 +1,19 @@
 module Api::V1
 	class BankAccountsController < ApplicationController
-		before_action :set_bank
-
 		def create
-			@bank_account = @bank.bank_accounts.create!(bank_account_params)
+			@bank_account = current_user.bank_accounts.create(bank_account_params)
+			@bank_account.bank = Bank.find(params[:bank_id])
+			@bank_account.save!
 			json_response(@bank_account, :created)
 		end
 
 		def show
-			@bank_account = @bank.bank_accounts.find(params[:id])
+			@bank_account = current_user.bank_accounts.find(params[:id])
 			json_response(@bank_account)
 		end
 
 		def payments
-			bank_account = @bank.bank_accounts.find(params[:bank_account_id])	
+			bank_account = current_user.bank_accounts.find(params[:bank_account_id])	
 			@payments	= bank_account.origin_payments
 			json_response(@payments)
 		end
@@ -22,10 +22,6 @@ module Api::V1
 
 		def bank_account_params
 			params.require(:bank_account).permit(:iban, :balance)
-		end
-
-		def set_bank
-			@bank = Bank.find(params[:bank_id])
 		end
 	end
 end

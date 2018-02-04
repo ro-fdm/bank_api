@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Payments API', type: :request do 
 	# initialize test data
+  let(:user) { create(:user) }
 	let(:bank) {FactoryBot.create(:bank) }
 	let(:origin_account){ FactoryBot.create(:bank_account, bank: bank) }
 	let(:destination_account) { FactoryBot.create(:bank_account, bank: bank) }
@@ -9,11 +10,13 @@ RSpec.describe 'Payments API', type: :request do
                                 origin: origin_account,
                                 destination: destination_account )}
   let(:payment_id) { payments.first.id}
+    # authorize request
+  let(:headers) { valid_headers }
 
 	describe 'GET /payments/:id' do
 		before do
       bank
-      get "/api/v1/bank/#{bank.id}/payments/#{payment_id}"
+      get "/api/v1/bank/#{bank.id}/payments/#{payment_id}", params: {}, headers: headers
     end
 
 		context 'when payment exist' do
@@ -43,16 +46,19 @@ RSpec.describe 'Payments API', type: :request do
   # Test suite for POST /todos
   describe 'POST /payments' do
     # valid bank accounts
+    let(:user) { create(:user) }
     let(:payment_attributes) { { payment: 
                                   { amount: 12345, 
                                     origin_id: origin_account.id,
                                     destination_id: destination_account.id } 
                                 } }
+    # authorize request
+    let(:headers) { valid_headers }
 
     context 'when the request is valid' do
       before do
         bank
-        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes
+        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes.to_json, headers: headers
       end
 
       it 'creates a payment' do
@@ -67,7 +73,7 @@ RSpec.describe 'Payments API', type: :request do
     context 'when the request is invalid' do
       before do
         bank
-        post "/api/v1/bank/#{bank.id}/payments", params: { payment:{ amount: '12345' } } 
+        post "/api/v1/bank/#{bank.id}/payments", params: { payment:{ amount: '12345' } }.to_json, headers: headers 
       end
 
       it 'returns status code 422' do

@@ -20,5 +20,18 @@ RSpec.describe Payment, type: :model do
   		expect(payment).to be_valid
   	end
 
+    it "should be valid kind nil" do
+      payment = FactoryBot.build(:payment, kind: nil)
+      
+      expect(payment.save).to be_truthy
+      expect(payment).to be_valid
+    end
+
+    it "#payment_service" do
+      payment = FactoryBot.build(:payment, kind: "transfer")
+      
+      expect(payment.payment_service).to eq(Transfer)
+    end
+
   end
 end

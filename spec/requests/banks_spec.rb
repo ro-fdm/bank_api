@@ -1,8 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe 'Users API', type: :request do
-  let(:user) { build(:user) }
-  let(:headers) { valid_headers.except('Authorization') }
+RSpec.describe 'Banks API', type: :request do
+  let(:user) { create(:user) }
+  # authorize request
+  let(:headers) { valid_headers }
   let(:banks){ create_list(:bank, 10) }
   let(:bank){ FactoryBot.create(:bank)}
   let(:valid_attributes) do
@@ -13,6 +14,7 @@ RSpec.describe 'Users API', type: :request do
   describe 'GET /banks/' do
     context 'when banks' do
       before do
+        user
         banks
         get "/api/v1/banks", params: {}, headers: headers
       end
@@ -35,15 +37,16 @@ RSpec.describe 'Users API', type: :request do
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(404)
+        expect(response).to have_http_status(200)
       end
     end
   end
 
   # Test suite for POST /todos
   describe 'POST /bank_accounts' do
-    # valid bank accounts
-    let(:user) { create(:user) }    
+    let(:user) { create(:user) }
+    # authorize request
+    let(:headers) { valid_headers }  
     let(:ba_attributes) { 
                           { bank: 
                             { 
@@ -80,13 +83,15 @@ RSpec.describe 'Users API', type: :request do
 
       it 'returns a validation failure message' do
         expect(response.body)
-          .to match(/Balance can't be blank/)
+          .to match(/Name can't be blank/)
       end
     end
   end
 
   describe 'GET /banks/:id/payments' do
-    let(:user) { create(:user) } 
+    let(:user) { create(:user) }
+    # authorize request
+    let(:headers) { valid_headers }
     let(:bank){ FactoryBot.create(:bank)}
     let(:destination){ FactoryBot.create(:bank_account)}
     let(:origin){ FactoryBot.create(:bank_account, bank: bank, user: user)}
@@ -95,6 +100,8 @@ RSpec.describe 'Users API', type: :request do
 
     context 'when payments exist' do
       before do
+        user
+        bank
         payments
         get "/api/v1/banks/#{bank.id}/payments", params: {}, headers: headers
       end
@@ -111,7 +118,9 @@ RSpec.describe 'Users API', type: :request do
 
     context 'when payments does not exist' do
       before do
-        get "/api/v1/bank/#{bank.id}/payments", params: {}, headers: headers
+        user
+        bank
+        get "/api/v1/banks/#{bank.id}/payments", params: {}, headers: headers
       end
 
       it 'returns status code 200' do

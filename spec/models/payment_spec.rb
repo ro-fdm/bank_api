@@ -4,6 +4,9 @@ RSpec.describe Payment, type: :model do
   it { should belong_to(:origin) }
   it { should belong_to(:destination) }
   it { validate_presence_of(:amount) }
+  it { should validate_numericality_of(:amount)}
+  it { should_not allow_value(0).for(:amount)}
+  it { should_not allow_value(-1).for(:amount)}
 
   describe "should validate kind" do
   	it "should be invalid if kind is not inclusion" do

@@ -37,4 +37,16 @@ describe Transfer do
     expect(payment_inter_bank.destination.balance).to eq(11)
   end
 
+  it "transfer fails" do
+    transfer = payment_inter_bank.payment_service
+    origin = payment_inter_bank.origin
+    origin.update_columns(balance: 0)
+    
+    transfer.new(payment_inter_bank).run
+
+    expect(payment_inter_bank.comision).to eq(5)
+    expect(payment_inter_bank.origin.balance).to eq(9)
+    expect(payment_inter_bank.destination.balance).to eq(11)
+  end
+
 end

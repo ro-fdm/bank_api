@@ -6,7 +6,9 @@ Rails.application.routes.draw do
 
 	namespace :api do
 		namespace :v1 do
-			resources :bank do
+			resources :banks, only: [:index, :create] do
+				get "payments"
+
 				resources :bank_accounts, only: [:show, :create] do
 					get "payments"
 				end

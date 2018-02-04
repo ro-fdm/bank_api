@@ -2,12 +2,15 @@ require 'rails_helper'
 
 RSpec.describe 'BankAccounts API', type: :request do 
 	# initialize test data
+  let(:user) { create(:user) }
 	let(:bank) { FactoryBot.create(:bank) }
 	let!(:bank_accounts){ create_list(:bank_account, 10, bank: bank) }
 	let(:bank_account_id) { bank_accounts.first.id }
+  # authorize request
+  let(:headers) { valid_headers }
 
 	describe 'GET /bank_accounts/:id' do
-		before { get "/api/v1/bank/#{bank.id}/bank_accounts/#{bank_account_id}"}
+		before { get "/api/v1/bank/#{bank.id}/bank_accounts/#{bank_account_id}", params: {}, headers: headers}
 
 		context 'when bank_account exist' do
 			it 'returns the bank_account' do
@@ -36,21 +39,22 @@ RSpec.describe 'BankAccounts API', type: :request do
   # Test suite for POST /todos
   describe 'POST /bank_accounts' do
     # valid bank accounts
+    let(:user) { create(:user) }    
     let(:bank) { FactoryBot.create(:bank) }
     let(:ba_attributes) { 
     											{ bank_account: 
     												{ 
-    													iban: '123456789', 
-    													bank: bank,
+    													iban: '123456789',
     													balance: 12345 
     												} 
     											} 
     										}
+    let(:headers) { valid_headers }
 
     context 'when the request is valid' do
       before do
       	bank
-      	post "/api/v1/bank/#{bank.id}/bank_accounts", params: ba_attributes
+      	post "/api/v1/bank/#{bank.id}/bank_accounts", params: ba_attributes.to_json, headers: headers
       end
 
       it 'creates a bank_account' do
@@ -65,7 +69,7 @@ RSpec.describe 'BankAccounts API', type: :request do
     context 'when the request is invalid' do
       before do
       	bank
-				post "/api/v1/bank/#{bank.id}/bank_accounts", params: {bank_account:{ iban: 'Foobar' } } 
+				post "/api/v1/bank/#{bank.id}/bank_accounts", params: {bank_account:{ iban: 'Foobar' } }.to_json, headers: headers 
 			end
 
       it 'returns status code 422' do
@@ -80,14 +84,16 @@ RSpec.describe 'BankAccounts API', type: :request do
   end
 
   describe 'GET /bank_accounts/:id/origin_payments' do
+    let(:user) { create(:user) } 
     let(:destination){ FactoryBot.create(:bank_account)}
     let(:origin){ FactoryBot.create(:bank_account, bank: bank)}
     let(:payments){ create_list(:payment, 10, origin: origin, destination: destination )}
+    let(:headers) { valid_headers }
 
     context 'when payments exist' do
       before do
         payments
-        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments"
+        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments", params: {}, headers: headers
       end
 
       it 'returns the payments when origin is the bank_account' do
@@ -102,7 +108,7 @@ RSpec.describe 'BankAccounts API', type: :request do
 
     context 'when payments does not exist' do
       before do
-        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments"
+        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments", params: {}, headers: headers
       end
 
       it 'returns status code 200' do

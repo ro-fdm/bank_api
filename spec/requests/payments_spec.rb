@@ -52,6 +52,19 @@ RSpec.describe 'Payments API', type: :request do
                                     origin_id: origin_account.id,
                                     destination_id: destination_account.id } 
                                 } }
+    let(:payment_attributes_with_valid_kind) { { payment: 
+                                                { amount: 12345, 
+                                                  origin_id: origin_account.id,
+                                                  destination_id: destination_account.id,
+                                                  kind: "transfer" } 
+                                              } }
+    let(:payment_attributes_with_no_valid_kind) { { payment: 
+                                                  { amount: 12345, 
+                                                    origin_id: origin_account.id,
+                                                    destination_id: destination_account.id,
+                                                    kind: "debit" } 
+                                                } }
+
     # authorize request
     let(:headers) { valid_headers }
 
@@ -63,6 +76,7 @@ RSpec.describe 'Payments API', type: :request do
 
       it 'creates a payment' do
         expect(json['amount']).to eq(12345)
+        expect(json['transfer']).to be_nil
       end
 
       it 'returns status code 201' do
@@ -85,6 +99,38 @@ RSpec.describe 'Payments API', type: :request do
           .to match(/Origin must exist/)
          expect(response.body)
           .to match(/Destination must exist/)
+      end
+    end
+
+    context 'when the payment kind is valid' do
+      before do
+        bank
+        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes_with_valid_kind.to_json, headers: headers
+      end
+
+      it 'creates a payment' do
+        expect(json['amount']).to eq(12345)
+        expect(json['kind']).to eq("transfer")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'when the payment kind is invalid' do
+      before do
+        bank
+        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes_with_no_valid_kind.to_json, headers: headers 
+      end
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(response.body)
+          .to match(/Kind is not included in the list/)
       end
     end
   end

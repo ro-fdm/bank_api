@@ -7,13 +7,17 @@ module Api::V1
 
 		def create
 			@payment = Payment.create!(payment_params)
+			if @payment.kind
+				service = @payment.payment_service
+				service.new(@payment).run
+			end
 			json_response(@payment, :created)
 		end
 
 		private
 
 		def payment_params
-			params.require(:payment).permit(:amount, :origin_id, :destination_id)
+			params.require(:payment).permit(:amount, :origin_id, :destination_id, :kind)
 		end
 	end
 end

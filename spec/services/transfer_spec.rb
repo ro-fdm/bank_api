@@ -39,4 +39,19 @@ describe Transfer do
     expect(payment_inter_bank.destination.balance).to eq(11)
   end
 
+  it "transfer inter bank fails by exceed limit" do
+    payment = FactoryBot.create(:payment,
+                                  amount: 1001,
+                                  origin: origin_account,
+                                  destination: destination_account_different_bank,
+                                  kind: "transfer" )
+    transfer = payment.payment_service
+    result = transfer.new(payment_inter_bank).run!
+
+    expect(result).to be_falsey
+    expect(payment_inter_bank.comision).to eq(nil)
+    expect(payment_inter_bank.origin.balance).to eq(15)
+    expect(payment_inter_bank.destination.balance).to eq(10)
+  end
+
 end

@@ -133,6 +133,24 @@ RSpec.describe 'Payments API', type: :request do
           .to match(/Kind is not included in the list/)
       end
     end
+
+    context 'when the payment service fail' do
+      before do
+        bank
+        payment_attributes_with_valid_kind
+        origin_account.update_columns(balance: 0)
+        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes_with_valid_kind.to_json, headers: headers 
+      end
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(response.body)
+          .to match(/Balance must be greater than 0/)
+      end
+    end
   end
 
 end

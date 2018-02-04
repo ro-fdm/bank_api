@@ -9,9 +9,9 @@ module Api::V1
 			@payment = Payment.create!(payment_params)
 			if @payment.kind
 				service = @payment.payment_service
-				service.new(@payment).run
+				service.new(@payment).run!
 			end
-			json_response(@payment, :created)
+				json_response(@payment, :created)
 		end
 
 		private

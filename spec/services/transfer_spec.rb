@@ -21,8 +21,9 @@ describe Transfer do
 
   it "transfer intra bank" do
     transfer = payment_intra_bank.payment_service
-    transfer.new(payment_intra_bank).run
+    result = transfer.new(payment_intra_bank).run!
 
+    expect(result).to be_truthy
     expect(payment_intra_bank.comision).to eq(0)
     expect(payment_intra_bank.origin.balance).to eq(14)
     expect(payment_intra_bank.destination.balance).to eq(11)
@@ -30,20 +31,9 @@ describe Transfer do
 
   it "transfer inter bank" do
     transfer = payment_inter_bank.payment_service
-    transfer.new(payment_inter_bank).run
+    result = transfer.new(payment_inter_bank).run!
 
-    expect(payment_inter_bank.comision).to eq(5)
-    expect(payment_inter_bank.origin.balance).to eq(9)
-    expect(payment_inter_bank.destination.balance).to eq(11)
-  end
-
-  it "transfer fails" do
-    transfer = payment_inter_bank.payment_service
-    origin = payment_inter_bank.origin
-    origin.update_columns(balance: 0)
-    
-    transfer.new(payment_inter_bank).run
-
+    expect(result).to be_truthy
     expect(payment_inter_bank.comision).to eq(5)
     expect(payment_inter_bank.origin.balance).to eq(9)
     expect(payment_inter_bank.destination.balance).to eq(11)

@@ -4,7 +4,7 @@ class Transfer
 		@payment = payment
 	end
 
-	def run
+	def run!
 		ActiveRecord::Base.transaction do
 			if @payment.origin.bank == @payment.destination.bank
 				intra_bank
@@ -13,9 +13,6 @@ class Transfer
 			end
 			update_balances
 		end
-	rescue ActiveRecord::RecordInvalid => exception
-				@payment.status = "KO"
-				ap exception
 	end
 
 	def intra_bank

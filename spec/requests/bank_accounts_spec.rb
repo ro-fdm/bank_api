@@ -10,7 +10,7 @@ RSpec.describe 'BankAccounts API', type: :request do
   let(:headers) { valid_headers }
 
 	describe 'GET /bank_accounts/:id' do
-		before { get "/api/v1/bank/#{bank.id}/bank_accounts/#{bank_account_id}", params: {}, headers: headers}
+		before { get "/api/v1/banks/#{bank.id}/bank_accounts/#{bank_account_id}", params: {}, headers: headers}
 
 		context 'when bank_account exist' do
 			it 'returns the bank_account' do
@@ -29,6 +29,7 @@ RSpec.describe 'BankAccounts API', type: :request do
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
       end
+
 
       it 'returns a not found message' do
         expect(response.body).to match(/Couldn't find BankAccount/)
@@ -55,7 +56,7 @@ RSpec.describe 'BankAccounts API', type: :request do
       before do
       	user
         bank
-      	post "/api/v1/bank/#{bank.id}/bank_accounts", params: ba_attributes.to_json, headers: headers
+      	post "/api/v1/banks/#{bank.id}/bank_accounts", params: ba_attributes.to_json, headers: headers
       end
 
       it 'creates a bank_account' do
@@ -71,7 +72,7 @@ RSpec.describe 'BankAccounts API', type: :request do
       before do
         user
       	bank
-				post "/api/v1/bank/#{bank.id}/bank_accounts", params: {bank_account:{ iban: 'Foobar' } }.to_json, headers: headers 
+				post "/api/v1/banks/#{bank.id}/bank_accounts", params: {bank_account:{ iban: 'Foobar' } }.to_json, headers: headers 
 			end
 
       it 'returns status code 422' do
@@ -95,7 +96,7 @@ RSpec.describe 'BankAccounts API', type: :request do
     context 'when payments exist' do
       before do
         payments
-        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments", params: {}, headers: headers
+        get "/api/v1/banks/#{bank.id}/bank_accounts/#{origin.id}/payments", params: {}, headers: headers
       end
 
       it 'returns the payments when origin is the bank_account' do
@@ -110,7 +111,7 @@ RSpec.describe 'BankAccounts API', type: :request do
 
     context 'when payments does not exist' do
       before do
-        get "/api/v1/bank/#{bank.id}/bank_accounts/#{origin.id}/payments", params: {}, headers: headers
+        get "/api/v1/banks/#{bank.id}/bank_accounts/#{origin.id}/payments", params: {}, headers: headers
       end
 
       it 'returns status code 200' do

@@ -27,6 +27,8 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem 'awesome_print'
 
+gem 'jwt'
+
 group :test do
 	gem 'factory_bot_rails'
   gem 'shoulda-matchers', '~> 3.1'

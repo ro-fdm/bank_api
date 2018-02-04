@@ -4,7 +4,7 @@ RSpec.describe 'BankAccounts API', type: :request do
 	# initialize test data
   let(:user) { create(:user) }
 	let(:bank) { FactoryBot.create(:bank) }
-	let!(:bank_accounts){ create_list(:bank_account, 10, bank: bank) }
+	let!(:bank_accounts){ create_list(:bank_account, 10, bank: bank, user: user) }
 	let(:bank_account_id) { bank_accounts.first.id }
   # authorize request
   let(:headers) { valid_headers }
@@ -45,7 +45,7 @@ RSpec.describe 'BankAccounts API', type: :request do
     											{ bank_account: 
     												{ 
     													iban: '123456789',
-    													balance: 12345 
+    													balance: 12345
     												} 
     											} 
     										}
@@ -53,7 +53,8 @@ RSpec.describe 'BankAccounts API', type: :request do
 
     context 'when the request is valid' do
       before do
-      	bank
+      	user
+        bank
       	post "/api/v1/bank/#{bank.id}/bank_accounts", params: ba_attributes.to_json, headers: headers
       end
 
@@ -68,6 +69,7 @@ RSpec.describe 'BankAccounts API', type: :request do
 
     context 'when the request is invalid' do
       before do
+        user
       	bank
 				post "/api/v1/bank/#{bank.id}/bank_accounts", params: {bank_account:{ iban: 'Foobar' } }.to_json, headers: headers 
 			end
@@ -86,7 +88,7 @@ RSpec.describe 'BankAccounts API', type: :request do
   describe 'GET /bank_accounts/:id/origin_payments' do
     let(:user) { create(:user) } 
     let(:destination){ FactoryBot.create(:bank_account)}
-    let(:origin){ FactoryBot.create(:bank_account, bank: bank)}
+    let(:origin){ FactoryBot.create(:bank_account, bank: bank, user: user)}
     let(:payments){ create_list(:payment, 10, origin: origin, destination: destination )}
     let(:headers) { valid_headers }
 

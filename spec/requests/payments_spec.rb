@@ -16,7 +16,7 @@ RSpec.describe 'Payments API', type: :request do
 	describe 'GET /payments/:id' do
 		before do
       bank
-      get "/api/v1/bank/#{bank.id}/payments/#{payment_id}", params: {}, headers: headers
+      get "/api/v1/banks/#{bank.id}/payments/#{payment_id}", params: {}, headers: headers
     end
 
 		context 'when payment exist' do
@@ -71,7 +71,7 @@ RSpec.describe 'Payments API', type: :request do
     context 'when the request is valid' do
       before do
         bank
-        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes.to_json, headers: headers
+        post "/api/v1/banks/#{bank.id}/payments", params: payment_attributes.to_json, headers: headers
       end
 
       it 'creates a payment' do
@@ -87,7 +87,7 @@ RSpec.describe 'Payments API', type: :request do
     context 'when the request is invalid' do
       before do
         bank
-        post "/api/v1/bank/#{bank.id}/payments", params: { payment:{ amount: '12345' } }.to_json, headers: headers 
+        post "/api/v1/banks/#{bank.id}/payments", params: { payment:{ amount: '12345' } }.to_json, headers: headers 
       end
 
       it 'returns status code 422' do
@@ -105,7 +105,7 @@ RSpec.describe 'Payments API', type: :request do
     context 'when the payment kind is valid' do
       before do
         bank
-        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes_with_valid_kind.to_json, headers: headers
+        post "/api/v1/banks/#{bank.id}/payments", params: payment_attributes_with_valid_kind.to_json, headers: headers
       end
 
       it 'creates a payment' do
@@ -121,7 +121,7 @@ RSpec.describe 'Payments API', type: :request do
     context 'when the payment kind is invalid' do
       before do
         bank
-        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes_with_no_valid_kind.to_json, headers: headers 
+        post "/api/v1/banks/#{bank.id}/payments", params: payment_attributes_with_no_valid_kind.to_json, headers: headers 
       end
 
       it 'returns status code 422' do
@@ -139,7 +139,7 @@ RSpec.describe 'Payments API', type: :request do
         bank
         payment_attributes_with_valid_kind
         origin_account.update_columns(balance: 0)
-        post "/api/v1/bank/#{bank.id}/payments", params: payment_attributes_with_valid_kind.to_json, headers: headers 
+        post "/api/v1/banks/#{bank.id}/payments", params: payment_attributes_with_valid_kind.to_json, headers: headers 
       end
 
       it 'returns status code 422' do

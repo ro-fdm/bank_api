@@ -7,14 +7,14 @@ RSpec.describe Payment, type: :model do
 
   describe "should validate kind" do
   	it "should be invalid if kind is not inclusion" do
-  		payment = FactoryBot.create(:payment, kind: "debit")
+  		payment = FactoryBot.build(:payment, kind: "debit")
   		
   		expect(payment.save).to be_falsey
   		expect(payment).not_to be_valid
   	end
 
   	it "should be valid if kind is inclusion" do
-  		payment = FactoryBot.create(:payment, kind: "transfer")
+  		payment = FactoryBot.build(:payment, kind: "transfer")
   		
   		expect(payment.save).to be_truthy
   		expect(payment).to be_valid

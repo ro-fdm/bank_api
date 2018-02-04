@@ -3,5 +3,6 @@ FactoryBot.define do
     iban { Faker::Code.imei }
     balance Faker::Number.number(5)
     association :bank
+    association :user
   end
 end

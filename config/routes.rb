@@ -12,8 +12,8 @@ Rails.application.routes.draw do
 				resources :bank_accounts, only: [:show, :create] do
 					get "payments"
 				end
-				resources :payments, only: [:show, :create]
 			end
+			resources :payments, only: [:show, :create]
 		end
 	end
 end

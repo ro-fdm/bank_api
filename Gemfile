@@ -30,6 +30,8 @@ gem 'awesome_print'
 
 gem 'jwt'
 
+gem 'active_model_serializers', '~> 0.10.0'
+
 group :test do
 	gem 'factory_bot_rails'
   gem 'shoulda-matchers', '~> 3.1'

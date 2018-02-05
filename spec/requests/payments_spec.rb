@@ -75,6 +75,8 @@ RSpec.describe 'Payments API', type: :request do
       it 'creates a payment' do
         expect(json['amount']).to eq(12345)
         expect(json['transfer']).to be_nil
+        expect(json['origin']['id']).to be(origin_account.id)
+        expect(json['destination']['id']).to be(destination_account.id)
       end
 
       it 'returns status code 201' do

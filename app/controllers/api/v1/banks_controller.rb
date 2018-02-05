@@ -11,12 +11,10 @@ module Api::V1
 		end
 
 		def payments
-			ap params
 			bank = Bank.find(params[:bank_id])
 			bank_payments = Payment.select{ |p| p.origin.bank == bank}
-			ap bank_payments
 			bank_payments_sort = bank_payments.sort_by{ |bp| bp.created_at }.reverse!
-			json_response(bank_payments_sort)
+			render json: bank_payments_sort, each_serializer: PaymentBankSerializer
 		end
 
 		private

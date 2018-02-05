@@ -24,7 +24,7 @@ class Transfer
 	end
 
 	def inter_bank
-		@payment.comision = 5
+		@payment.comision = 500
 		@payment.status = "OK"
 		@payment.save!
 	end

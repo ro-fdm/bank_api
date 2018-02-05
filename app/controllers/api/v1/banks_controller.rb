@@ -11,7 +11,7 @@ module Api::V1
 		end
 
 		def payments
-			bank = Bank.find(params[:bank_id])	
+			bank = Bank.find(params[:bank_id])
 			bank_payments = Payment.select{ |p| p.origin.bank == bank || p.destination.bank == bank }
 			bank_payments_sort = bank_payments.sort_by{ |bp| bp.created_at }.reverse!
 			json_response(bank_payments_sort)

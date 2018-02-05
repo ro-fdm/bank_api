@@ -10,7 +10,7 @@ RSpec.describe 'BankAccounts API', type: :request do
   let(:headers) { valid_headers }
 
 	describe 'GET /bank_accounts/:id' do
-		before { get "/api/v1/banks/#{bank.id}/bank_accounts/#{bank_account_id}", params: {}, headers: headers}
+		before { get "/api/v1/bank_accounts/#{bank_account_id}", params: {}, headers: headers}
 
 		context 'when bank_account exist' do
 			it 'returns the bank_account' do

@@ -9,10 +9,11 @@ Rails.application.routes.draw do
 			resources :banks, only: [:index, :create] do
 				get "payments"
 
-				resources :bank_accounts, only: [:show, :create] do
+				resources :bank_accounts, only: [:create] do
 					get "payments"
 				end
 			end
+			resources :bank_accounts, only: [:show]
 			resources :payments, only: [:show, :create]
 		end
 	end

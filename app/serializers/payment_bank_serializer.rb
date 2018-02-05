@@ -1,6 +1,6 @@
 class PaymentBankSerializer < ActiveModel::Serializer
-  attributes :id, 
-             :amount, 
+  attributes :id,
+             :amount,
              :comision,
              :status
 end

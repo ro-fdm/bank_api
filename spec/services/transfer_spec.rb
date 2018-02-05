@@ -1,25 +1,29 @@
-require "rails_helper"
+require 'rails_helper'
 
 describe Transfer do
   let(:user) { create(:user) }
   let(:bank) { FactoryBot.create(:bank) }
-  let(:origin_account){ FactoryBot.create(:bank_account, bank: bank, balance: 1500) }
+  let(:origin_account) { FactoryBot.create(:bank_account, bank: bank, balance: 1500) }
   let(:destination_account) { FactoryBot.create(:bank_account, bank: bank, balance: 1000) }
-  let(:payment_intra_bank){ FactoryBot.create(:payment,
-                                              amount: 100,
-                                              origin: origin_account,
-                                              destination: destination_account,
-                                              kind: "transfer" )}
+  let(:payment_intra_bank) do
+    FactoryBot.create(:payment,
+                      amount: 100,
+                      origin: origin_account,
+                      destination: destination_account,
+                      kind: 'transfer')
+  end
 
   let(:bank2) { FactoryBot.create(:bank) }
-  let(:destination_account_different_bank){ FactoryBot.create(:bank_account, bank: bank2, balance: 1000) }
-  let(:payment_inter_bank){ FactoryBot.create(:payment,
-                                              amount: 100,
-                                              origin: origin_account,
-                                              destination: destination_account_different_bank,
-                                              kind: "transfer" )}
+  let(:destination_account_different_bank) { FactoryBot.create(:bank_account, bank: bank2, balance: 1000) }
+  let(:payment_inter_bank) do
+    FactoryBot.create(:payment,
+                      amount: 100,
+                      origin: origin_account,
+                      destination: destination_account_different_bank,
+                      kind: 'transfer')
+  end
 
-  it "transfer intra bank" do
+  it 'transfer intra bank' do
     transfer = payment_intra_bank.payment_service
     result = transfer.new(payment_intra_bank).run!
 
@@ -29,7 +33,7 @@ describe Transfer do
     expect(payment_intra_bank.destination.balance).to eq(1100)
   end
 
-  it "transfer inter bank" do
+  it 'transfer inter bank' do
     transfer = payment_inter_bank.payment_service
     result = transfer.new(payment_inter_bank).run!
 
@@ -39,12 +43,12 @@ describe Transfer do
     expect(payment_inter_bank.destination.balance).to eq(1100)
   end
 
-  it "transfer inter bank fails by exceed limit" do
+  it 'transfer inter bank fails by exceed limit' do
     payment = FactoryBot.create(:payment,
-                                  amount: 100001,
-                                  origin: origin_account,
-                                  destination: destination_account_different_bank,
-                                  kind: "transfer" )
+                                amount: 100_001,
+                                origin: origin_account,
+                                destination: destination_account_different_bank,
+                                kind: 'transfer')
     transfer = payment.payment_service
     result = transfer.new(payment).run!
 
@@ -53,5 +57,4 @@ describe Transfer do
     expect(payment.origin.balance).to eq(1500)
     expect(payment.destination.balance).to eq(1000)
   end
-
 end

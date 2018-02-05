@@ -4,19 +4,18 @@ RSpec.describe 'Banks API', type: :request do
   let(:user) { create(:user) }
   # authorize request
   let(:headers) { valid_headers }
-  let(:banks){ create_list(:bank, 10) }
-  let(:bank){ FactoryBot.create(:bank)}
+  let(:banks) { create_list(:bank, 10) }
+  let(:bank) { FactoryBot.create(:bank) }
   let(:valid_attributes) do
     attributes_for(:bank)
   end
-
 
   describe 'GET /banks/' do
     context 'when banks' do
       before do
         user
         banks
-        get "/api/v1/banks", params: {}, headers: headers
+        get '/api/v1/banks', params: {}, headers: headers
       end
 
       it 'returns the banks' do
@@ -30,7 +29,7 @@ RSpec.describe 'Banks API', type: :request do
     end
 
     context 'when banks does not exist' do
-      before { get "/api/v1/banks", params: {}, headers: headers}
+      before { get '/api/v1/banks', params: {}, headers: headers }
 
       it 'returns json empty' do
         expect(json).to be_empty
@@ -46,20 +45,19 @@ RSpec.describe 'Banks API', type: :request do
   describe 'POST /bank_accounts' do
     let(:user) { create(:user) }
     # authorize request
-    let(:headers) { valid_headers }  
-    let(:ba_attributes) { 
-                          { bank: 
-                            { 
-                              name: 'Banco de Hierro'
-                            } 
-                          } 
-                        }
+    let(:headers) { valid_headers }
+    let(:ba_attributes) do
+      { bank:
+        {
+          name: 'Banco de Hierro'
+        } }
+    end
     let(:headers) { valid_headers }
 
     context 'when the request is valid' do
       before do
         user
-        post "/api/v1/banks", params: ba_attributes.to_json, headers: headers
+        post '/api/v1/banks', params: ba_attributes.to_json, headers: headers
       end
 
       it 'creates a bank' do
@@ -74,7 +72,7 @@ RSpec.describe 'Banks API', type: :request do
     context 'when the request is invalid' do
       before do
         user
-        post "/api/v1/banks", params: {bank:{ name: '' } }.to_json, headers: headers 
+        post '/api/v1/banks', params: { bank: { name: '' } }.to_json, headers: headers
       end
 
       it 'returns status code 422' do
@@ -92,10 +90,10 @@ RSpec.describe 'Banks API', type: :request do
     let(:user) { create(:user) }
     # authorize request
     let(:headers) { valid_headers }
-    let(:bank){ FactoryBot.create(:bank)}
-    let(:destination){ FactoryBot.create(:bank_account)}
-    let(:origin){ FactoryBot.create(:bank_account, bank: bank, user: user)}
-    let(:payments){ create_list(:payment, 5, origin: origin, destination: destination )}
+    let(:bank) { FactoryBot.create(:bank) }
+    let(:destination) { FactoryBot.create(:bank_account) }
+    let(:origin) { FactoryBot.create(:bank_account, bank: bank, user: user) }
+    let(:payments) { create_list(:payment, 5, origin: origin, destination: destination) }
     let(:headers) { valid_headers }
 
     context 'when payments exist' do
@@ -127,10 +125,9 @@ RSpec.describe 'Banks API', type: :request do
         expect(response).to have_http_status(200)
       end
 
-      it "returns a empty json" do
+      it 'returns a empty json' do
         expect(json).to be_empty
       end
     end
   end
-
 end

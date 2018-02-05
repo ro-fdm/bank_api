@@ -11,7 +11,8 @@ module Api::V1
 				service = @payment.payment_service
 				service.new(@payment).run!
 			end
-				json_response(@payment, :created)
+			
+			render json: @payment, serializer: PaymentSerializer, status: :created
 		end
 
 		private

@@ -1,7 +1,7 @@
 class PaymentSerializer < ActiveModel::Serializer
-  attributes :id, 
-             :amount, 
-             :comision, 
+  attributes :id,
+             :amount,
+             :comision,
              :kind,
              :status
 
